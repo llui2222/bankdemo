@@ -88,4 +88,15 @@ class BankdemoApplicationTests{
             .andExpect(jsonPath("$.account", `is`(33333333)))
             .andExpect(jsonPath("$.value", `is`(10)))
     }
+    @Test
+    fun transfer_NegativeNotenoughFund() {
+        bankdemoRepository.save(AccountDB(1,55555555,10))
+        bankdemoRepository.save(AccountDB(2,33333333,15))
+        mockMvc.perform(
+            post("/v1/transfer")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"from\":\"33333333\", \"to\":\"55555555\", \"value\":\"25\"}")
+        )
+            .andExpect(status().isNotAcceptable)
+    }
 }
